@@ -75,22 +75,85 @@
 
 # Delete existing data, so you'll start fresh each time this script is run.
 # Use `Model.destroy_all` code.
-# TODO!
+
+Role.destroy_all
+Movie.destroy_all
+Actor.destroy_all
+Studio.destroy_all
 
 # Generate models and tables, according to the domain model.
-# TODO!
+
+warner_bros = Studio.create(name: "Warner Bros.")
+
+movies = [
+  { title: "Batman Begins", year_released: 2005, rated: "PG-13", studio: warner_bros },
+  { title: "The Dark Knight", year_released: 2008, rated: "PG-13", studio: warner_bros },
+  { title: "The Dark Knight Rises", year_released: 2012, rated: "PG-13", studio: warner_bros }
+]
+
+movies.each do |movie_data|
+    Movie.create(movie_data)
+  end
+
+  actors = [
+  "Christian Bale",
+  "Michael Caine",
+  "Liam Neeson",
+  "Katie Holmes",
+  "Gary Oldman",
+  "Heath Ledger",
+  "Aaron Eckhart",
+  "Maggie Gyllenhaal",
+  "Tom Hardy",
+  "Joseph Gordon-Levitt",
+  "Anne Hathaway"
+]
+
+actors.each do |actor_name|
+    Actor.create(name: actor_name)
+  end
 
 # Insert data into the database that reflects the sample data shown above.
 # Do not use hard-coded foreign key IDs.
-# TODO!
+
+roles = [
+  { movie_title: "Batman Begins", actor_name: "Christian Bale", character_name: "Bruce Wayne" },
+  { movie_title: "Batman Begins", actor_name: "Michael Caine", character_name: "Alfred" },
+  { movie_title: "Batman Begins", actor_name: "Liam Neeson", character_name: "Ra's al Ghul" },
+  { movie_title: "Batman Begins", actor_name: "Katie Holmes", character_name: "Rachel Dawes" },
+  { movie_title: "Batman Begins", actor_name: "Gary Oldman", character_name: "Commissioner Gordon" },
+  { movie_title: "The Dark Knight", actor_name: "Christian Bale", character_name: "Bruce Wayne" },
+  { movie_title: "The Dark Knight", actor_name: "Heath Ledger", character_name: "Joker" },
+  { movie_title: "The Dark Knight", actor_name: "Aaron Eckhart", character_name: "Harvey Dent" },
+  { movie_title: "The Dark Knight", actor_name: "Michael Caine", character_name: "Alfred" },
+  { movie_title: "The Dark Knight", actor_name: "Maggie Gyllenhaal", character_name: "Rachel Dawes" },
+  { movie_title: "The Dark Knight Rises", actor_name: "Christian Bale", character_name: "Bruce Wayne" },
+  { movie_title: "The Dark Knight Rises", actor_name: "Gary Oldman", character_name: "Commissioner Gordon" },
+  { movie_title: "The Dark Knight Rises", actor_name: "Tom Hardy", character_name: "Bane" },
+  { movie_title: "The Dark Knight Rises", actor_name: "Joseph Gordon-Levitt", character_name: "John Blake" },
+  { movie_title: "The Dark Knight Rises", actor_name: "Anne Hathaway", character_name: "Selina Kyle" }
+]
+
+roles.each do |role_data|
+    movie = Movie.find_by(title: role_data[:movie_title])
+    actor = Actor.find_by(name: role_data[:actor_name])
+    Role.create(movie: movie, actor: actor, character_name: role_data[:character_name])
+  end
+
 
 # Prints a header for the movies output
 puts "Movies"
 puts "======"
 puts ""
 
+
+
 # Query the movies data and loop through the results to display the movies output.
-# TODO!
+
+
+Movie.includes(:studio).all.each do |movie|
+    puts "#{movie.title.ljust(25)} #{movie.year_released} #{movie.rated.ljust(5)} #{movie.studio.name}"
+  end
 
 # Prints a header for the cast output
 puts ""
@@ -99,4 +162,7 @@ puts "========"
 puts ""
 
 # Query the cast data and loop through the results to display the cast output for each movie.
-# TODO!
+
+Role.includes(:movie, :actor).all.each do |role|
+    puts "#{role.movie.title.ljust(25)} #{role.actor.name.ljust(20)} #{role.character_name}"
+  end
